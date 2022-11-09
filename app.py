@@ -114,10 +114,10 @@ if photo:
             cv2.LINE_AA)
         st.image(frameFace)
 
-        if st.download_button("กดปุ่มเพื่อโหลดรูปภาพ",
+        if st.download_button ( label="กดปุ่มเพื่อโหลดรูปภาพ",
                                 data=frameFace,
-                                file_name='frameFace.jpg',
-                                mime="jpg/png"):
+                                file_name="frameFace.pdf",
+                                mime='application/octet-stream'):
             st.write('ดาวน์โหลดสำเร็จ')
 
         else:

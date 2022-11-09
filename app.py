@@ -1,22 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Serverless Image Processing App</title>
-  <meta name="description" content="A Serverless Streamlit application with OpenCV image processing that completely works on your browser">
-</head>
-<body>
-  <div id="root"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.1.0/build/stlite.js"></script>
-  <script>
-    stlite.mount({
-      requirements: ["opencv-python", "matplotlib"],
-      entrypoint: "streamlit_app.py",
-      files: {
-        "streamlit_app.py": `
-
 import time
 import cv2
 import streamlit as st
@@ -141,11 +122,3 @@ if photo:
 
         else:
             st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")
-
-`
-      },
-    },
-    document.getElementById("root"))
-  </script>
-</body>
-</html>

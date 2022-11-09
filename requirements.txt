@@ -1,4 +1,5 @@
 opencv-contrib-python-headless
+PyGithub requests
 numpy==1.23.3
 Pillow==9.2.0
 streamlit==1.14.0

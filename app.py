@@ -114,10 +114,10 @@ if photo:
             cv2.LINE_AA)
         st.image(frameFace)
 
-        if st.button("กดปุ่มเพื่อโหลดรูปภาพ"):
-            im_pil = Image.fromarray(frameFace)
-            im_pil.save('frameFace.jpeg')
-            mime="image/png"
+        if st.download_button("กดปุ่มเพื่อโหลดรูปภาพ",
+                                data=frameFace,
+                                file_name='frameFace.jpg',
+                                mime="jpg/png"):
             st.write('ดาวน์โหลดสำเร็จ')
 
         else:

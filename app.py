@@ -7,13 +7,12 @@ import numpy as np
 from PIL import Image
 from datetime import datetime
 
-class Detectface():
-    def get_face_box(net, frame, conf_threshold=0.7):
+class Detectface(): #เขียนอยู่ในรูปแบบ oop โดยการเรียกใช้ฟังก์ชั่น
+    def get_face_box(net, frame, conf_threshold=0.7): #โค๊ด Python สำหรับการตรวจจับใบหน้า ตั้งแต่ 15-35
         opencv_dnn_frame = frame.copy()
         frame_height = opencv_dnn_frame.shape[0]
         frame_width = opencv_dnn_frame.shape[1]
-        blob_img = cv2.dnn.blobFromImage(opencv_dnn_frame, 1.0, (300, 300), [
-                                                            104, 117, 123], True, False)
+        blob_img = cv2.dnn.blobFromImage(opencv_dnn_frame, 1.0, (300, 300), [104, 117, 123], True, False) #เรียกใช้อัลกอริทึม blob = cv2.dnn.blobFromImage และกำหนด scale factor ตามที่ต้องการ
 
         net.setInput(blob_img)
         detections = net.forward()
@@ -35,16 +34,16 @@ st.write("## Upload a picture that contains a face"+":camera:")
 
 bytes_data = None
 t=time.time()
-input_mode = st.radio("# Input mode", ["Camera", "File upload"])
+input_mode = st.radio("# Input mode", ["Camera", "File upload"]) #กำหนกให้สามารถเลือกได้ว่าจะใช้ กล้อง หรือ อัพโหลดรูปภาพ
 
-if input_mode == "Camera":
+if input_mode == "Camera": #เรียกใช้กล้อง
     img_file_buffer = st.camera_input("Take a picture")
-    photo = img_file_buffer
+    photo = img_file_buffer # กำหนดตัวแปลให้ photo เป็น img_file_buffer
     if img_file_buffer is not None:
         bytes_data = img_file_buffer.getvalue()
 else:
     uploaded_file = st.file_uploader("โปรดอัพรูปของคุณ", type=['png', 'jpg'])
-    photo = uploaded_file
+    photo = uploaded_file # กำหนดตัวแปลให้ photo เป็น uploaded_file
     if uploaded_file is not None:
         # To read file as bytes:
         bytes_data = uploaded_file.getvalue()

@@ -7,12 +7,6 @@ entrypoints==0.4
 et-xmlfile==1.1.0
 Flask==2.2.2
 fonttools==4.25.0
-greenlet==2.0.1
-idna==3.4
-importlib-metadata==5.0.0
-importlib-resources==5.10.0
-mkl-service==2.4.0
-munkres==1.1.4
 mysql-connector-python==8.0.31
 numpy==1.23.3
 opencv-contrib-python-headless

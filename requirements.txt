@@ -14,3 +14,4 @@ python-dateutil
 python-dotenv==0.21.0
 requests==2.28.1
 SQLAlchemy==1.4.43
+databases

@@ -1,18 +1,9 @@
 import base64
-import github
-from pprint import pprint
 import time
 import cv2
 import streamlit as st
 import numpy as np
 from PIL import Image
-
-token = "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"
-g = github.Github(token)
-# or  g = github.Github(login, password)
-
-# searching for my repository
-repo = g.search_repositories("agestreamlit")[0]
 
 def get_face_box(net, frame, conf_threshold=0.7):
     opencv_dnn_frame = frame.copy()
@@ -135,10 +126,3 @@ if photo:
                     st.write('ดาวน์โหลดสำเร็จ')
                 else :
                     st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")
-
-        # create a file and commit n push
-        repo.create_file("Result.jpeg", "commit message", "content of the file")
-
-        # delete that created file
-        contents = repo.get_contents("Result.jpeg")
-        repo.delete_file(contents.path, "remove Result.jpeg", contents.sha)

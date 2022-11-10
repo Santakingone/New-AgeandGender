@@ -3,9 +3,7 @@ import streamlit as st  # pip install streamlit
 from deta import Deta  # pip install deta
 from dotenv import dotenv_values
 
-temp = dotenv_values(".env")
-
-TOKEN = temp["DETA_KEY"] 
+TOKEN = "c0lbzahp_nyDCF3QJLWYAjAowXfMajByEPMjwP3ay"
 
 # Initialize with a project key
 deta = Deta(TOKEN)

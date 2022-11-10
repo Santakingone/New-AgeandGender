@@ -1,39 +1,40 @@
-import time
 import cv2
-import base64
+import time
+import database as db
 import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
-from io import BytesIO
+from datetime import datetime
 
-def get_face_box(net, frame, conf_threshold=0.7):
-    opencv_dnn_frame = frame.copy()
-    frame_height = opencv_dnn_frame.shape[0]
-    frame_width = opencv_dnn_frame.shape[1]
-    blob_img = cv2.dnn.blobFromImage(opencv_dnn_frame, 1.0, (300, 300), [
-        104, 117, 123], True, False)
+class Detectface():
+    def get_face_box(net, frame, conf_threshold=0.7):
+        opencv_dnn_frame = frame.copy()
+        frame_height = opencv_dnn_frame.shape[0]
+        frame_width = opencv_dnn_frame.shape[1]
+        blob_img = cv2.dnn.blobFromImage(opencv_dnn_frame, 1.0, (300, 300), [
+                                                            104, 117, 123], True, False)
 
-    net.setInput(blob_img)
-    detections = net.forward()
-    b_boxes_detect = []
-    for i in range(detections.shape[2]):
-        confidence = detections[0, 0, i, 2]
-        if confidence > conf_threshold:
-            x1 = int(detections[0, 0, i, 3] * frame_width)
-            y1 = int(detections[0, 0, i, 4] * frame_height)
-            x2 = int(detections[0, 0, i, 5] * frame_width)
-            y2 = int(detections[0, 0, i, 6] * frame_height)
-            b_boxes_detect.append([x1, y1, x2, y2])
-            cv2.rectangle(opencv_dnn_frame, (x1, y1), (x2, y2),
+        net.setInput(blob_img)
+        detections = net.forward()
+        b_boxes_detect = []
+        for i in range(detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+            if confidence > conf_threshold:
+                x1 = int(detections[0, 0, i, 3] * frame_width)
+                y1 = int(detections[0, 0, i, 4] * frame_height)
+                x2 = int(detections[0, 0, i, 5] * frame_width)
+                y2 = int(detections[0, 0, i, 6] * frame_height)
+                b_boxes_detect.append([x1, y1, x2, y2])
+                cv2.rectangle(opencv_dnn_frame, (x1, y1), (x2, y2),
                           (0, 255, 0), int(round(frame_height / 150)), 8)
-    return opencv_dnn_frame, b_boxes_detect
+        return opencv_dnn_frame, b_boxes_detect
 
 st.write("# Age and Gender prediction"+":star2:")
-st.write("## Upload a picture that contains a face")
+st.write("## Upload a picture that contains a face"+":camera:")
 
 bytes_data = None
-
+t=time.time()
 input_mode = st.radio("# Input mode", ["Camera", "File upload"])
 
 if input_mode == "Camera":
@@ -51,24 +52,24 @@ if bytes_data is None:
     st.stop()
     
 if photo:
-    image = Image.open(photo)
+    image = Image.open(photo) #เรียกใช้ photo
     cap = np.array(image)
     cv2.imwrite('temp.jpg', cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY))
     cap=cv2.imread('temp.jpg')
-
+    #69-76 เรียกใช้ข้อมูลมาเก็บไว้ในตัวแแปล เพื่อให้ใช้งานได้สะดวกขึ้น
     face_txt_path="opencv_face_detector.pbtxt"
     face_model_path="opencv_face_detector_uint8.pb"
 
-    age_txt_path="age_deploy.prototxt"
-    age_model_path="age_net.caffemodel"
+    age_txt_path="age_deploy.prototxt" #ไฟล์ที่ลงท้ายด้วย .prototxt ไฟล์นี้กำหนดเลเยอร์ในโครงข่ายประสาทเทียม อินพุต เอาต์พุต และฟังก์ชันของแต่ละเลเยอร์ 72 และ 75 #ไฟล์ CNN ที่ช่วย แยกอายุ
+    age_model_path="age_net.caffemodel" #ไฟล์ที่ลงท้ายด้วย .caffemodel 73 และ 76 คือ This contains the information of the trained neural network (trained model)
 
-    gender_txt_path="gender_deploy.prototxt"
+    gender_txt_path="gender_deploy.prototxt" #ไฟล์ CNN ที่ช่วย แยกเพศ
     gender_model_path="gender_net.caffemodel"
 
     MODEL_MEAN_VALUES=(78.4263377603, 87.7689143744, 114.895847746)
     age_classes=['Age: ~1-2', 'Age: ~3-5', 'Age: ~6-14', 'Age: ~16-22',
                 'Age: ~25-30', 'Age: ~32-40', 'Age: ~45-50', 'Age: age is greater than 60']
-    gender_classes = ['Gender:Male', 'Gender:Female']
+    gender_classes = ['Male', 'Female']
 
     age_net = cv2.dnn.readNet(age_model_path, age_txt_path)
     gender_net = cv2.dnn.readNet(gender_model_path, gender_txt_path)
@@ -76,9 +77,9 @@ if photo:
 
     padding = 20
     t = time.time()
-    frameFace, b_boxes = get_face_box(face_net, cap)
+    frameFace, b_boxes = Detectface.get_face_box(face_net, cap) # Detectface เรียกใช้ฟังก์ชั่น highlightFace นอกคลาส
     if not b_boxes:
-        st.write("No face Detected, Checking next frame")
+        st.write("ไม่พบใบหน้าที่กำลังตรวจสอบ")
 
     for bbox in b_boxes:
         face = cap[max(0, bbox[1] -
@@ -115,34 +116,39 @@ if photo:
             255),
             2,
             cv2.LINE_AA)
-        st.image(frameFace) #โชว์รูปผ่านเว็ป
-        st.sidebar.header("Show")
-        df = pd.read_csv("data/test.csv")
-        st.sidebar.table(df)
 
-        options_form = st.sidebar.form("options_form")
-        user_name = options_form.text_input("Name")
-        user_age = options_form.text_input("Age")
-        add_data = options_form.form_submit_button()
-        if add_data:
-            new_data = {"name": user_name ,"age": int(user_age)}
+        st.image(frameFace) #้โชว์รูปผ่านเว็ป
+
+        st.sidebar.header("บันทึกข้อมูลลงในฐานข้อมูล")
+        df = pd.read_csv("data/test.csv") #กำหนดเส้นทางให้ df
+        st.sidebar.table(df) #โชว์ตารางออกมา
+        options_form = st.sidebar.form("options_form") #กำหนดตัวเลือก
+        add_name = options_form.text_input("โปรดใส่ชื่อของคุณ") #กำหนดกล่องข้อความให้รับค่า ชื่อ
+        now = datetime.now() #เซ็ตค่าให้เป็นเวลาปัจจุบัน
+        user_time = now.strftime("%H:%M:%S") #กำหนด ชั่วโมง นาที วินาที
+        add_data = options_form.form_submit_button("บันทึกจัดเก็บข้อมูล") #กำหนดปุ่มบันทึก
+        if add_data is not None: #กำหนดให้ทำการบันทึกข้อมูลไปยัง CSV
+            new_data = {"name": add_name , "gender": gender ,"age": age ,"time": user_time} #กำหนดให้บันทึกคอลัมน์
             df = df.append(new_data, ignore_index = True)
             df.to_csv("data/test.csv" , index = False)
+            db.insert_period(add_name,gender,age,user_time)
 
-        im_pil = Image.fromarray(frameFace)
-        im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล
-        with open("Result.jpeg", "rb") as file:  # เปิดรูป Result.jpeg เพื่อใช้ในการกำหนดปุ่มโหลดภาพ
+            if add_data: #กำหนดให้แสดงข้อความเมื่อกดปุ่ม
+                st.sidebar.header("บันทึกข้อมูลสำเร็จ") #แสดงข้อความทางแถบซ้าย
+
+            im_pil = Image.fromarray(frameFace)
+            im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล
+            with open("Result.jpeg", "rb") as file:  # เปิดรูป Result.jpeg เพื่อใช้ในการกำหนดปุ่มโหลดภาพ
                 btn = st.download_button( #กำหนดปุ่มโหลดภาพ
                         label="ดาวน์โหลดรูปภาพ", #กำหนดตัวอักษรในปุ่ม
                         data=file, #กำหนดให้ data มีค่าเท่ากับ file
                         file_name="image_test.jpeg", #กำหนดชื่อภาพ
-                        )
-                if btn :
-                    st.write('ดาวน์โหลดสำเร็จ')
-                    new_data = {"name": tt}
-                    df=pd.read_csv("data/imagedata.csv")
-                    df=df.append(new_data, ignore_index=True)
-                    st.title("Excel Update data")
-                    st.write(df)
-                else :
-                    st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")
+                    )
+            if btn :
+                st.write('ดาวน์โหลดสำเร็จ')
+            else :
+                st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")
+        if add_data :
+            st.write('สรุปกราฟ เพศและอายุ ของผู้ใช้งานทั้งหมด')
+            df2 = df.filter(regex= '(gender|age)', axis=1) #กำหนดให้แสดงแค่ เพศและอายุ
+            st.line_chart(df2) #กำหนดให้แสดงกราฟ

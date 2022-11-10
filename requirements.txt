@@ -57,13 +57,5 @@ PyQt5-sip
 pyrsistent==0.19.2
 python-dateutil 
 python-dotenv==0.21.0
-pytz
 requests==2.28.1
-rich==12.6.0
-scipy==1.7.3
-seaborn 
-semver==2.13.0
-sip 
-six 
-smmap==5.0.0
 SQLAlchemy==1.4.43

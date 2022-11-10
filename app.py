@@ -1,9 +1,21 @@
 import base64
+from config import ( create_connection, read_query)
 import time
 import cv2
 import streamlit as st
+import psycopg2
 import numpy as np
 from PIL import Image
+
+
+def get_tables():
+    # Creation Connection and Query:
+    connection = create_connection()
+    query = read_query('SELECT * FROM imagesdata;')
+    # Execute Statement
+    results = execute_and_return(connection, query)
+    return {'results':results}
+
 
 def get_face_box(net, frame, conf_threshold=0.7):
     opencv_dnn_frame = frame.copy()

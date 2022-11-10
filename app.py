@@ -123,9 +123,9 @@ if photo:
             cv2.LINE_AA)
         st.image(frameFace) #โชว์รูปผ่านเว็ป
         result = Image.fromarray(frameFace)
-        btn = st.button("ดาวน์โหลดรูปภาพ")   
+        btn = st.button("ดาวน์โหลดรูปภาพ")
         if btn :
-            rt=st.markdown(get_image_download_link(result,img_file_buffer.name,
+            st.markdown(get_image_download_link(result,img_file_buffer.name,
                         ' Download '+img_file_buffer.name), unsafe_allow_html=True)
             st.write('กดที่ไฟล์เพื่อดาวน์โหลดสำเร็จ')
         else :

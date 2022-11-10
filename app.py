@@ -1,17 +1,9 @@
-import base64
 import time
 import cv2
 import streamlit as st
-from io import BytesIO
 import numpy as np
 from PIL import Image
 
-def get_image_download_link(img,filename,text):
-    buffered = BytesIO()
-    img.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-    href =  f'<a href="data:file/txt;base64,{img_str}" download="{filename}">{text}</a>'
-    return href
 
 def get_face_box(net, frame, conf_threshold=0.7):
     opencv_dnn_frame = frame.copy()
@@ -122,13 +114,15 @@ if photo:
             2,
             cv2.LINE_AA)
         st.image(frameFace) #โชว์รูปผ่านเว็ป
-        result = Image.fromarray(frameFace)
-        btn = st.button("ดาวน์โหลดรูปภาพ")
-        if btn :
-            st.markdown(get_image_download_link(result,img_file_buffer.name,
-                        ' Download '+img_file_buffer.name), unsafe_allow_html=True)
-            st.write('กดที่ไฟล์เพื่อดาวน์โหลดสำเร็จ')
-        else :
-            st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")
-
-        
+        im_pil = Image.fromarray(frameFace)
+        im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล
+        with open("Result.jpeg", "rb") as file:  # เปิดรูป Result.jpeg เพื่อใช้ในการกำหนดปุ่มโหลดภาพ
+                btn = st.download_button( #กำหนดปุ่มโหลดภาพ
+                        label="ดาวน์โหลดรูปภาพ", #กำหนดตัวอักษรในปุ่ม
+                        data=file, #กำหนดให้ data มีค่าเท่ากับ file
+                        file_name="image_test.jpeg", #กำหนดชื่อภาพ
+                    )
+                if btn :
+                    st.write('ดาวน์โหลดสำเร็จ')
+                else :
+                    st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")

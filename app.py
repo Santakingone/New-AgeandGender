@@ -1,9 +1,11 @@
 import time
 import cv2
+import base64
 import streamlit as st
+import pandas as pd
 import numpy as np
 from PIL import Image
-
+from io import BytesIO
 
 def get_face_box(net, frame, conf_threshold=0.7):
     opencv_dnn_frame = frame.copy()
@@ -27,7 +29,7 @@ def get_face_box(net, frame, conf_threshold=0.7):
                           (0, 255, 0), int(round(frame_height / 150)), 8)
     return opencv_dnn_frame, b_boxes_detect
 
-st.write("# Age and Gender prediction")
+st.write("# Age and Gender prediction"+":star2:")
 st.write("## Upload a picture that contains a face")
 
 bytes_data = None
@@ -114,6 +116,19 @@ if photo:
             2,
             cv2.LINE_AA)
         st.image(frameFace) #โชว์รูปผ่านเว็ป
+        st.sidebar.header("Show")
+        df = pd.read_csv("data/test.csv")
+        st.sidebar.table(df)
+
+        options_form = st.sidebar.form("options_form")
+        user_name = options_form.text_input("Name")
+        user_age = options_form.text_input("Age")
+        add_data = options_form.form_submit_button()
+        if add_data:
+            new_data = {"name": user_name ,"age": int(user_age)}
+            df = df.append(new_data, ignore_index = True)
+            df.to_csv("data/test.csv" , index = False)
+
         im_pil = Image.fromarray(frameFace)
         im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล
         with open("Result.jpeg", "rb") as file:  # เปิดรูป Result.jpeg เพื่อใช้ในการกำหนดปุ่มโหลดภาพ
@@ -121,8 +136,13 @@ if photo:
                         label="ดาวน์โหลดรูปภาพ", #กำหนดตัวอักษรในปุ่ม
                         data=file, #กำหนดให้ data มีค่าเท่ากับ file
                         file_name="image_test.jpeg", #กำหนดชื่อภาพ
-                    )
+                        )
                 if btn :
                     st.write('ดาวน์โหลดสำเร็จ')
+                    new_data = {"name": tt}
+                    df=pd.read_csv("data/imagedata.csv")
+                    df=df.append(new_data, ignore_index=True)
+                    st.title("Excel Update data")
+                    st.write(df)
                 else :
                     st.write("คุณยังไม่ได้ทำการดาวน์โหลดรูปภาพ")

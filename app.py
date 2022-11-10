@@ -1,6 +1,5 @@
 import cv2 #เรียกใช้ open cv
 import time
-import database as db
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -127,14 +126,14 @@ if photo:
         now = datetime.now() #เซ็ตค่าให้เป็นเวลาปัจจุบัน
         user_time = now.strftime("%H:%M:%S") #กำหนด ชั่วโมง นาที วินาที
         add_data = options_form.form_submit_button("บันทึกจัดเก็บข้อมูล") #กำหนดปุ่มบันทึก
+        
         if add_data is not None: #กำหนดให้ทำการบันทึกข้อมูลไปยัง CSV
             new_data = {"name": add_name , "gender": gender ,"age": age ,"time": user_time} #กำหนดให้บันทึกคอลัมน์
             df = df.append(new_data, ignore_index = True)
             df.to_csv("data/test.csv" , index = False)
-            db.insert_period(add_name,gender,age,user_time)
 
-            if add_data: #กำหนดให้แสดงข้อความเมื่อกดปุ่ม
-                st.sidebar.header("บันทึกข้อมูลสำเร็จ") #แสดงข้อความทางแถบซ้าย
+        if add_data: #กำหนดให้แสดงข้อความเมื่อกดปุ่ม
+            st.sidebar.header("บันทึกข้อมูลสำเร็จ") #แสดงข้อความทางแถบซ้าย
 
             im_pil = Image.fromarray(frameFace)
             im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล

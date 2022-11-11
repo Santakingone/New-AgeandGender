@@ -1,11 +1,36 @@
 import cv2 #เรียกใช้ open cv
-import config as cf
 import streamlit as st #เรียกใช้ streamlit เพื่อใช้ในการเขียนเว็บไซต์
 import pandas as pd #เรียกใช้ pandas ไลบรารี Python แบบ open-source ที่มีเครื่องมือจัดการและวิเคราะห์ข้อมูลประสิทธิภาพสูงโดยใช้โครงสร้างข้อมูลที่
 import numpy as np #เรียกใช้ไลบารี่ numpy เพื่อช่วยในการคำนวนอาเรย์
 from PIL import Image #เรียกใช้ไลบารี่ Pillow 
 from datetime import datetime #เรียกใช้ datetime เพื่อกำหนดเวลาที่ใช้งาน ณ เวลานั้น
+from deta import Deta  # pip install deta
+from dotenv import dotenv_values
 
+temp = dotenv_values(".env")
+
+TOKEN = temp["DETA_KEY"] 
+
+# Initialize with a project key
+deta = Deta(TOKEN)
+
+# This is how to create/connect a database
+db = deta.Base("imagesdata")
+
+def insert_imagesdata(add_name, gender, age, user_time):
+    """Returns the report on a successful creation, otherwise raises an error"""
+    return db.put({"key": add_name, "gender": gender, "age": age, "datetime": user_time})
+
+
+def fetch_all_imagesdata():
+    """Returns a dict of all imagesdata"""
+    res = db.fetch()
+    return res.items
+
+
+def get_imagesdata(imagesdata):
+    """If not found, the function will return None"""
+    return db.get(imagesdata)
 
 class Detectface(): #เขียนอยู่ในรูปแบบ oop โดยการเรียกใช้ฟังก์ชั่น
     def get_face_box(net, frame, conf_threshold=0.7): #โค๊ด Python สำหรับการตรวจจับใบหน้า ตั้งแต่ 10-29
@@ -120,7 +145,7 @@ if photo: #เงื่อนไขรูปภาพ
             new_data = {"name": add_name , "gender": gender ,"age": age ,"time": user_time} #กำหนดให้บันทึกคอลัมน์
             df = df.append(new_data, ignore_index = True)
             df.to_csv("data/test.csv" , index = False)
-            cf.insert_imagesdata(add_name,gender,age,user_time)
+            insert_imagesdata(add_name,gender,age,user_time)
             st.sidebar.header("บันทึกข้อมูลสำเร็จ") #แสดงข้อความทางแถบซ้าย
         im_pil = Image.fromarray(frameFace) #แปลงอาร์เรย์ numpy เป็น PIL Image
         im_pil.save('Result.jpeg') #บันทึกรูปผลลัพธ์ลงได้ฐานข้อมูล

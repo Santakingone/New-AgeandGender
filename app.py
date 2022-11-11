@@ -6,13 +6,13 @@ from PIL import Image #เรียกใช้ไลบารี่ Pillow
 from datetime import datetime #เรียกใช้ datetime เพื่อกำหนดเวลาที่ใช้งาน ณ เวลานั้น
 from deta import Deta  # pip install deta
 
-TOKEN = "c0lbzahp_nyDCF3QJLWYAjAowXfMajByEPMjwP3ay"
+TOKEN = "c0lbzahp_nyDCF3QJLWYAjAowXfMajByEPMjwP3ay" #tokendeta
 
 # Initialize with a project key
 deta = Deta(TOKEN)
 
 # This is how to create/connect a database
-db = deta.Base("imagesdata")
+db = deta.Base("imagesdata") 
 
 def insert_imagesdata(add_name, gender, age, user_time):
     """Returns the report on a successful creation, otherwise raises an error"""
@@ -20,7 +20,7 @@ def insert_imagesdata(add_name, gender, age, user_time):
 
 
 def fetch_all_imagesdata():
-    """Returns a dict of all imagesdata"""
+    """Returns a dict of all imagesdata""" 
     res = db.fetch()
     return res.items
 

@@ -1,2 +1,7 @@
-name,age,gender,time
-,Age: ~6-14,Male,04:31:11
+name,gender,age,time
+แคนดี้,Male,Age: ~3-5,10:37:47
+เค้ก,Female,Age: ~25-30,10:39:17
+ลุงข้างบ้าน,Male,Age: age is greater than 60,10:40:17
+น้องต้า,Male,Age: ~6-14,10:44:15
+น้องแมน,Male,Age: ~6-14,10:44:21
+ลุงพล,Male,Age: ~32-40,10:53:22

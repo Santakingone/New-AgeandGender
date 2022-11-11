@@ -1,6 +1,6 @@
 numpy==1.23.3
 opencv-contrib-python-headless
-pandas==1.2.0
+pandas==1.5.1
 Pillow==9.2.0
 plotly==5.11.0
 plotly-express==0.4.1

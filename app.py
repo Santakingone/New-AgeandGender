@@ -1,13 +1,13 @@
 import cv2 #เรียกใช้ open cv
 import time
-import streamlit as st
-import pandas as pd
-import numpy as np
+import streamlit as st #เรียกใช้ streamlit
+import pandas as pd #เรียกใช้ pandas
+import numpy as np #เรียกใช้ numpy
 from PIL import Image
 from datetime import datetime
 
 class Detectface(): #เขียนอยู่ในรูปแบบ oop โดยการเรียกใช้ฟังก์ชั่น
-    def get_face_box(net, frame, conf_threshold=0.7): #โค๊ด Python สำหรับการตรวจจับใบหน้า ตั้งแต่ 15-35
+    def get_face_box(net, frame, conf_threshold=0.7): #โค๊ด Python สำหรับการตรวจจับใบหน้า ตั้งแต่ 9-29
         opencv_dnn_frame = frame.copy()
         frame_height = opencv_dnn_frame.shape[0]
         frame_width = opencv_dnn_frame.shape[1]
